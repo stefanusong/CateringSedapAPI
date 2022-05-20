@@ -24,7 +24,7 @@ namespace CateringSedapAPI.Controllers
 
         [HttpGet]
         [Route("get-food-by-id")]
-        public async Task<IActionResult> GetFoodsByIdAsync(Guid id)
+        public async Task<IActionResult> GetFoodByIdAsync(Guid id)
         {
             var food = await _db.Foods.FindAsync(id);
             return Ok(food);

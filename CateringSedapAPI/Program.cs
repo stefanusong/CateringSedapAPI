@@ -1,12 +1,15 @@
 using CateringSedapAPI.Context;
+using CateringSedapAPI.Services;
+using CateringSedapAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
+using CateringSedapAPI.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Add controller
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Add swagger services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -14,6 +17,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DbCredentials"))
 );
+
+// Register dependency injection
+builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IResponseHelper, ResponseHelper>();
 
 var app = builder.Build();
 
