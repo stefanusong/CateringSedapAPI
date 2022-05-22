@@ -74,7 +74,11 @@ builder.Services.AddDbContext<ApplicationContext>(
 
 // Register dependency injection
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IFoodService, FoodService>();
+
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IFoodRepository, FoodRepository>();
+
 builder.Services.AddTransient<IResponseHelper, ResponseHelper>();
 
 var app = builder.Build();
