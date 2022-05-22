@@ -1,5 +1,6 @@
 ﻿using CateringSedapAPI.Context;
 using CateringSedapAPI.Entitties;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace CateringSedapAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class FoodController : ControllerBase
     {
         private readonly ApplicationContext _db;
