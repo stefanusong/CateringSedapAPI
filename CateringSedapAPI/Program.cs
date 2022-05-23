@@ -76,10 +76,12 @@ builder.Services.AddDbContext<ApplicationContext>(
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IFoodService, FoodService>();
 builder.Services.AddTransient<IReservationService, ReservationService>();
+builder.Services.AddTransient<IDeliveryService, DeliveryService>();
 
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IFoodRepository, FoodRepository>();
 builder.Services.AddTransient<IReservationRepository, ReservationRepository>();
+builder.Services.AddTransient<IDeliveryRepository, DeliveryRepository>();
 
 builder.Services.AddTransient<IResponseHelper, ResponseHelper>();
 
