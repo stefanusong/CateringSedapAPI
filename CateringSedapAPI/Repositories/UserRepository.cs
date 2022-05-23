@@ -33,9 +33,9 @@ namespace CateringSedapAPI.Repositories
             return res.Entity.Id;
         }
 
-        public Task<User?> GetUserById(Guid id)
+        public async Task<User?> GetUserById(Guid id)
         {
-            throw new NotImplementedException();
+            return await _db.Users.FindAsync(id);
         }
     }
 }

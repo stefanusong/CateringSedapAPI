@@ -8,7 +8,9 @@ namespace CateringSedapAPI.Repositories
     {
         Task<List<Reservation>> GetReservations();
         Task<Reservation?> GetReservation(Guid id);
-        Task<string> CreateReservation(Reservation reservation);
+        Task<List<ReservationFood>?> GetReservationFoods(Guid reservationId);
+        Task<Guid> CreateReservation(Reservation reservation);
+        Task CreateReservationFood(ReservationFood reservationFood);
         Task UpdateReservation(Reservation reservation);
         Task DeleteReservation(Guid id);
     }
@@ -32,11 +34,22 @@ namespace CateringSedapAPI.Repositories
             return await _db.Reservations.FindAsync(id);
         }
 
-        public async Task<string> CreateReservation(Reservation reservation)
+        public async Task<List<ReservationFood>?> GetReservationFoods(Guid reservationId)
+        {
+            return await _db.ReservationFoods.Where(x => x.ReservationId == reservationId).ToListAsync();
+        }
+
+        public async Task<Guid> CreateReservation(Reservation reservation)
         {
             _db.Reservations.Add(reservation);
             await _db.SaveChangesAsync();
-            return reservation.Id.ToString();
+            return reservation.Id;
+        }
+
+        public async Task CreateReservationFood(ReservationFood reservationFood)
+        {
+            _db.ReservationFoods.Add(reservationFood);
+            await _db.SaveChangesAsync();
         }
 
         public async Task UpdateReservation(Reservation reservation)

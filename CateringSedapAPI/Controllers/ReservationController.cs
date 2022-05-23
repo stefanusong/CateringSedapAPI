@@ -1,45 +1,110 @@
-﻿using CateringSedapAPI.Context;
+﻿using System.Security.Claims;
+using CateringSedapAPI.Dto;
 using CateringSedapAPI.Entitties;
+using CateringSedapAPI.Helpers;
+using CateringSedapAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CateringSedapAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class ReservationController : ControllerBase
     {
-        private readonly ApplicationContext _db;
-        public ReservationController(ApplicationContext db)
+        private readonly IReservationService _reservationService;
+        private readonly IResponseHelper _responseHelper;
+        public ReservationController(IReservationService reservationService, IResponseHelper responseHelper)
         {
-            _db = db;
+            _reservationService = reservationService;
+            _responseHelper = responseHelper;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAllReservations()
         {
-            var reservations = await _db.Reservations.ToListAsync();
-            return Ok(reservations);
+            try
+            {
+                var reservations = await _reservationService.GetAllReservations();
+                if (reservations == null)
+                {
+                    return Ok(_responseHelper.GetSuccessResponse("No reservations found", new { }));
+                }
+                return Ok(_responseHelper.GetSuccessResponse("reservations retrieved", reservations));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(_responseHelper.GetErrorResponse(ex.Message));
+            }
         }
 
         [HttpGet]
         [Route("get-reservation-by-id")]
         public async Task<IActionResult> GetReservationByIdAsync(Guid id)
         {
-            var reservation = await _db.Reservations.FindAsync(id);
-            return Ok(reservation);
+            try
+            {
+                var reservation = await _reservationService.GetReservationDetail(id);
+                if (reservation == null)
+                {
+                    return NotFound(_responseHelper.GetErrorResponse("Reservation not found"));
+                }
+                return Ok(_responseHelper.GetSuccessResponse("Reservation found", reservation));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync(Reservation reservation)
+        public async Task<IActionResult> PostAsync(ReservationDto reservation)
         {
-            _db.Reservations.Add(reservation);
-            await _db.SaveChangesAsync();
-            return NoContent();
+            try
+            {
+                // Get user
+                var userId = User.FindFirst("userId")?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+
+                // Create Reservation
+                var userIdInGuid = Guid.Parse(userId);
+                var res = await _reservationService.CreateReservation(userIdInGuid, reservation);
+                if (res == Guid.Empty)
+                {
+                    return BadRequest();
+                }
+
+                return Ok(_responseHelper.GetSuccessResponse("Reservation created", res));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateReservationStatus(Guid id, ReservationStatus status)
+        {
+            try
+            {
+                var userId = User.FindFirst("userId")?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+
+                var userIdInGuid = Guid.Parse(userId);
+                await _reservationService.UpdateReservationStatus(id, status);
+                return Ok(_responseHelper.GetSuccessResponse("Reservation updated", new { }));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+            }
         }
     }
 }
