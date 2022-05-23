@@ -4,9 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CateringSedapAPI.Repositories
 {
-    public interface IUserRepository 
+    public interface IUserRepository
     {
         Task<User?> GetUserByUsername(string username);
+        Task<User?> GetUserById(Guid id);
         Task<Guid> CreateUser(User user);
     }
 
@@ -27,9 +28,14 @@ namespace CateringSedapAPI.Repositories
 
         public async Task<Guid> CreateUser(User user)
         {
-            var res =  _db.Users.Add(user);
+            var res = _db.Users.Add(user);
             await _db.SaveChangesAsync();
             return res.Entity.Id;
+        }
+
+        public Task<User?> GetUserById(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

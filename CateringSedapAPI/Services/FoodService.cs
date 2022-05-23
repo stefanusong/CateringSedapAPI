@@ -68,6 +68,48 @@ namespace CateringSedapAPI.Services
             }
         }
 
+        public async Task IncreaseFoodStockBy(int amount, Guid foodId)
+        {
+            var food = await _repo.GetFood(foodId);
+            if (food != null)
+            {
+                food.Stock += amount;
+                try
+                {
+                    await _repo.UpdateFood(food);
+                }
+                catch (Exception e)
+                {
+                    throw new Exception(e.Message);
+                }
+            }
+            else
+            {
+                throw new Exception("Food not found");
+            }
+        }
+
+        public async Task DecreaseFoodStockBy(int amount, Guid foodId)
+        {
+            var food = await _repo.GetFood(foodId);
+            if (food != null)
+            {
+                food.Stock -= amount;
+                try
+                {
+                    await _repo.UpdateFood(food);
+                }
+                catch (Exception e)
+                {
+                    throw new Exception(e.Message);
+                }
+            }
+            else
+            {
+                throw new Exception("Food not found");
+            }
+        }
+
         public async Task<bool> DeleteFood(Guid id)
         {
             try
