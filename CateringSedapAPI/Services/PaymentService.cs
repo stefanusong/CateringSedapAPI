@@ -69,7 +69,7 @@ namespace CateringSedapAPI.Services
                 {
                     if(status == Payment.PaymentStatus.Expired || status == Payment.PaymentStatus.Cancelled)
                     {
-                        CancelPayment(id);
+                        await CancelPayment(id);
                         return true;
                     }
                     else

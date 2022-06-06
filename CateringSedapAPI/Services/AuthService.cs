@@ -3,8 +3,10 @@ using System.Security.Claims;
 using System.Text;
 using CateringSedapAPI.Dto;
 using CateringSedapAPI.Entitties;
+using CateringSedapAPI.Factories;
 using CateringSedapAPI.Repositories;
 using Microsoft.IdentityModel.Tokens;
+using static CateringSedapAPI.Entitties.User;
 
 namespace CateringSedapAPI.Services
 {
@@ -50,9 +52,13 @@ namespace CateringSedapAPI.Services
             try
             {
                 newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
-                User userEntity = MapUserFromDto(newUser);
-                var id = await _repo.CreateUser(userEntity);
-                return id.ToString();
+                User? userEntity = MapUserFromDto(newUser);
+                if (userEntity != null)
+                {
+                    var id = await _repo.CreateUser(userEntity!);
+                    return id.ToString();
+                }
+                return string.Empty;
             }
             catch (Exception e)
             {
@@ -118,19 +124,23 @@ namespace CateringSedapAPI.Services
             return password.Length >= 5 && password.Any(char.IsDigit);
         }
 
-        private static User MapUserFromDto(RegisterDto dto)
+        private static User? MapUserFromDto(RegisterDto dto)
         {
-            User user = new()
+            UserFactory userFactory = new UserFactory();
+            switch(dto.Role)
             {
-                Username = dto.Username!.ToLower(),
-                Password = dto.Password,
-                Name = dto.Name,
-                Role = dto.Role
-            };
+                case UserRole.customer:
+                    var customerDto = (RegisterCustomerDto) dto;
+                    return userFactory.CreateCustomer(customerDto.Username!, customerDto.Password!, customerDto.Name!,  customerDto.Address!);
+                case UserRole.admin:
+                    var adminDto = (RegisterAdminDto)dto;
+                    return userFactory.CreateAdmin(adminDto.Username!, adminDto.Password!, adminDto.Name!, adminDto.JobPosition!);
+                case UserRole.driver:
+                    var driverDto = (RegisterDriverDto)dto;
+                    return userFactory.CreateDriver(driverDto.Username!, driverDto.Password!, driverDto.Name!, driverDto.BikeNumber!);
+            }
 
-            return user;
+            return null;
         }
-
-
     }
 }

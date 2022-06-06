@@ -1,13 +1,10 @@
+using CateringSedapAPI.Dto;
+using CateringSedapAPI.Entitties;
+using CateringSedapAPI.Repositories;
+using static CateringSedapAPI.Entitties.User;
+
 namespace CateringSedapAPI.Services
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using CateringSedapAPI.Dto;
-    using CateringSedapAPI.Entitties;
-    using CateringSedapAPI.Repositories;
-    using static CateringSedapAPI.Entitties.User;
-
     public interface IReservationService
     {
         Task<Guid> CreateReservation(Guid CustomerId, ReservationDto reservation);

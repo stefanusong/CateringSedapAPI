@@ -43,8 +43,46 @@ namespace CateringSedapAPI.Controllers
         }
 
         [HttpPost]
-        [Route("register")]
-        public async Task<IActionResult> Register(RegisterDto newUser)
+        [Route("register-customer")]
+        public async Task<IActionResult> RegisterCustomer(RegisterCustomerDto newUser)
+        {
+            try
+            {
+                var res = await _authService.Register(newUser);
+                if (!string.IsNullOrEmpty(res))
+                {
+                    return Ok(_responseHelper.GetSuccessResponse("register successful", res));
+                }
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+            }
+        }
+
+        [HttpPost]
+        [Route("register-admin")]
+        public async Task<IActionResult> RegisterAdmin(RegisterAdminDto newUser)
+        {
+            try
+            {
+                var res = await _authService.Register(newUser);
+                if (!string.IsNullOrEmpty(res))
+                {
+                    return Ok(_responseHelper.GetSuccessResponse("register successful", res));
+                }
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+            }
+        }
+
+        [HttpPost]
+        [Route("register-driver")]
+        public async Task<IActionResult> RegisterDriver(RegisterDriverDto newUser)
         {
             try
             {
