@@ -2,11 +2,11 @@ using CateringSedapAPI.Context;
 using CateringSedapAPI.Services;
 using CateringSedapAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
-using CateringSedapAPI.Helpers;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CateringSedapAPI.Factories;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -85,7 +85,7 @@ builder.Services.AddTransient<IReservationRepository, ReservationRepository>();
 builder.Services.AddTransient<IDeliveryRepository, DeliveryRepository>();
 builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
 
-builder.Services.AddTransient<IResponseHelper, ResponseHelper>();
+builder.Services.AddTransient<IResponseFactory, ResponseFactory>();
 
 var app = builder.Build();
 
