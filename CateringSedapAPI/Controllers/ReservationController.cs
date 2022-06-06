@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using CateringSedapAPI.Dto;
 using CateringSedapAPI.Entitties;
-using CateringSedapAPI.Helpers;
+using CateringSedapAPI.Factories;
 using CateringSedapAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace CateringSedapAPI.Controllers
     public class ReservationController : ControllerBase
     {
         private readonly IReservationService _reservationService;
-        private readonly IResponseHelper _responseHelper;
-        public ReservationController(IReservationService reservationService, IResponseHelper responseHelper)
+        private readonly IResponseFactory _responseFactory;
+        public ReservationController(IReservationService reservationService, IResponseFactory responseFactory)
         {
             _reservationService = reservationService;
-            _responseHelper = responseHelper;
+            _responseFactory = responseFactory;
         }
 
         [HttpGet]
@@ -29,13 +29,13 @@ namespace CateringSedapAPI.Controllers
                 var reservations = await _reservationService.GetAllReservations();
                 if (reservations == null)
                 {
-                    return Ok(_responseHelper.GetSuccessResponse("No reservations found", new { }));
+                    return Ok(_responseFactory.GetSuccessResponse("No reservations found", new { }));
                 }
-                return Ok(_responseHelper.GetSuccessResponse("reservations retrieved", reservations));
+                return Ok(_responseFactory.GetSuccessResponse("reservations retrieved", reservations));
             }
             catch (Exception ex)
             {
-                return BadRequest(_responseHelper.GetErrorResponse(ex.Message));
+                return BadRequest(_responseFactory.GetErrorResponse(ex.Message));
             }
         }
 
@@ -48,13 +48,13 @@ namespace CateringSedapAPI.Controllers
                 var reservation = await _reservationService.GetReservationDetail(id);
                 if (reservation == null)
                 {
-                    return NotFound(_responseHelper.GetErrorResponse("Reservation not found"));
+                    return NotFound(_responseFactory.GetErrorResponse("Reservation not found"));
                 }
-                return Ok(_responseHelper.GetSuccessResponse("Reservation found", reservation));
+                return Ok(_responseFactory.GetSuccessResponse("Reservation found", reservation));
             }
             catch (Exception e)
             {
-                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+                return BadRequest(_responseFactory.GetErrorResponse(e.Message));
             }
         }
 
@@ -78,11 +78,11 @@ namespace CateringSedapAPI.Controllers
                     return BadRequest();
                 }
 
-                return Ok(_responseHelper.GetSuccessResponse("Reservation created", res));
+                return Ok(_responseFactory.GetSuccessResponse("Reservation created", res));
             }
             catch (Exception e)
             {
-                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+                return BadRequest(_responseFactory.GetErrorResponse(e.Message));
             }
         }
 
@@ -99,11 +99,11 @@ namespace CateringSedapAPI.Controllers
 
                 var userIdInGuid = Guid.Parse(userId);
                 await _reservationService.UpdateReservationStatus(id, status);
-                return Ok(_responseHelper.GetSuccessResponse("Reservation updated", new { }));
+                return Ok(_responseFactory.GetSuccessResponse("Reservation updated", new { }));
             }
             catch (Exception e)
             {
-                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+                return BadRequest(_responseFactory.GetErrorResponse(e.Message));
             }
         }
     }

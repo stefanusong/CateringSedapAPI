@@ -1,6 +1,6 @@
 ﻿using CateringSedapAPI.Context;
 using CateringSedapAPI.Dto;
-using CateringSedapAPI.Helpers;
+using CateringSedapAPI.Factories;
 using CateringSedapAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,14 +13,14 @@ namespace CateringSedapAPI.Controllers
         public IConfiguration _config;
         public readonly ApplicationContext _db;
         public readonly IAuthService _authService;
-        public readonly IResponseHelper _responseHelper;
+        public readonly IResponseFactory _responseFactory;
 
-        public AuthController(IConfiguration config, ApplicationContext db, IAuthService authService, IResponseHelper responseHelper)
+        public AuthController(IConfiguration config, ApplicationContext db, IAuthService authService, IResponseFactory responseFactory)
         {
             _config = config;
             _db = db;
             _authService = authService;
-            _responseHelper = responseHelper;
+            _responseFactory = responseFactory;
         }
 
         [HttpPost]
@@ -34,11 +34,11 @@ namespace CateringSedapAPI.Controllers
                 {
                     return Unauthorized();
                 }
-                return Ok(_responseHelper.GetSuccessResponse("login successful", token));
+                return Ok(_responseFactory.GetSuccessResponse("login successful", token));
             }
             catch (Exception e)
             {
-                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+                return BadRequest(_responseFactory.GetErrorResponse(e.Message));
             }
         }
 
@@ -51,13 +51,13 @@ namespace CateringSedapAPI.Controllers
                 var res = await _authService.Register(newUser);
                 if (!string.IsNullOrEmpty(res))
                 {
-                    return Ok(_responseHelper.GetSuccessResponse("register successful", res));
+                    return Ok(_responseFactory.GetSuccessResponse("register successful", res));
                 }
                 return BadRequest();
             }
             catch (Exception e)
             {
-                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+                return BadRequest(_responseFactory.GetErrorResponse(e.Message));
             }
         }
 
@@ -70,13 +70,13 @@ namespace CateringSedapAPI.Controllers
                 var res = await _authService.Register(newUser);
                 if (!string.IsNullOrEmpty(res))
                 {
-                    return Ok(_responseHelper.GetSuccessResponse("register successful", res));
+                    return Ok(_responseFactory.GetSuccessResponse("register successful", res));
                 }
                 return BadRequest();
             }
             catch (Exception e)
             {
-                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+                return BadRequest(_responseFactory.GetErrorResponse(e.Message));
             }
         }
 
@@ -89,13 +89,13 @@ namespace CateringSedapAPI.Controllers
                 var res = await _authService.Register(newUser);
                 if (!string.IsNullOrEmpty(res))
                 {
-                    return Ok(_responseHelper.GetSuccessResponse("register successful", res));
+                    return Ok(_responseFactory.GetSuccessResponse("register successful", res));
                 }
                 return BadRequest();
             }
             catch (Exception e)
             {
-                return BadRequest(_responseHelper.GetErrorResponse(e.Message));
+                return BadRequest(_responseFactory.GetErrorResponse(e.Message));
             }
         }
     }
